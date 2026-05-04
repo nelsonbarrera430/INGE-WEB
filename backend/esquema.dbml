@@ -1,0 +1,62 @@
+Table "SequelizeMeta" {
+  "name" "character varying(255)" [pk, not null]
+}
+
+Table "categories" {
+  "id" integer [pk, not null]
+  "name" "character varying(255)" [unique, not null]
+  "image" "character varying(255)" [not null]
+  "created_at" timestamp [not null]
+}
+
+Table "customers" {
+  "id" integer [pk, not null]
+  "name" "character varying(255)" [not null]
+  "last_name" "character varying(255)" [not null]
+  "phone" "character varying(255)"
+  "created_at" timestamp [not null]
+  "user_id" integer [unique, not null]
+}
+
+Table "orders" {
+  "id" integer [pk, not null]
+  "customer_id" integer [not null]
+  "created_at" timestamp [not null]
+}
+
+Table "orders_products" {
+  "id" integer [pk, not null]
+  "created_at" timestamp [not null]
+  "amount" integer [not null]
+  "order_id" integer [not null]
+  "product_id" integer [not null]
+}
+
+Table "products" {
+  "id" integer [pk, not null]
+  "name" "character varying(255)" [not null]
+  "image" "character varying(255)" [not null]
+  "description" text [not null]
+  "price" integer [not null]
+  "created_at" timestamp [not null]
+  "category_id" integer [not null]
+}
+
+Table "users" {
+  "id" integer [pk, not null]
+  "email" "character varying(255)" [unique, not null]
+  "password" "character varying(255)" [not null]
+  "role" "character varying(255)" [not null, default: `'customer'::charactervarying`]
+  "created_at" timestamp [not null]
+  "recovery_token" "character varying(255)"
+}
+
+Ref "customers_user_id_fkey":"users"."id" < "customers"."user_id" [update: cascade, delete: set null]
+
+Ref "orders_customer_id_fkey":"customers"."id" < "orders"."customer_id" [update: cascade, delete: set null]
+
+Ref "orders_products_order_id_fkey":"orders"."id" < "orders_products"."order_id" [update: cascade, delete: set null]
+
+Ref "orders_products_product_id_fkey":"products"."id" < "orders_products"."product_id" [update: cascade, delete: set null]
+
+Ref "products_category_id_fkey":"categories"."id" < "products"."category_id" [update: cascade, delete: set null]
