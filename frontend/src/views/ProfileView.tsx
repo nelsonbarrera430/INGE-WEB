@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMe } from '../services/profile';
+import { useAuth } from '../context/AuthContext';
 import { clearToken } from '../services/session';
 
 type User = {
@@ -10,17 +9,8 @@ type User = {
 };
 
 export default function ProfileView() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getMe()
-      .then(setUser)
-      .catch(() => setError('No se pudo cargar el perfil'))
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleLogout = () => {
     clearToken();
@@ -31,7 +21,6 @@ export default function ProfileView() {
     <div className="max-w-sm mx-auto p-6 bg-white dark:bg-slate-800 rounded-xl shadow space-y-4">
       <h1 className="text-xl font-semibold">Mi Perfil</h1>
       {loading && <p>Cargando...</p>}
-      {error && <p className="text-red-600">{error}</p>}
       {user && (
         <div className="space-y-2">
           <p><span className="font-medium">Email:</span> {user.email}</p>
